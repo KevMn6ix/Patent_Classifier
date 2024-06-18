@@ -77,7 +77,8 @@ target/
 
 # Files
 data.xlsx
-
+lemm_data.xlsx
+cleaned_data.xlsx
 # Jupyter Notebook
 .ipynb_checkpoints
 
