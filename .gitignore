@@ -79,6 +79,8 @@ target/
 data.xlsx
 lemm_data.xlsx
 cleaned_data.xlsx
+cl_mini_data.xlsx
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
