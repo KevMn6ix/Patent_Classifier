@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Classification App</title>
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e9ecef;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        textarea {
+            width: 90%;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            font-size: 1em;
+            resize: none;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            color: #343a40;
+            margin-top: 30px;
+        }
+
+        ul {
+            text-align: left;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .result-text {
+            margin-left: 10px;
+            white-space: pre-wrap;
+            color: #212529;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Projet Explain</h1>
+        <form id="classificationForm" method="POST" onsubmit="return validateForm()">
+            <textarea id="textInput" name="text" rows="4" cols="50" placeholder="Entrer un texte à classifier"></textarea><br>
+            <button type="submit">Classifier</button>
+        </form>
+        {% if classification_log %}
+        <h2>Classification Log:</h2>
+        <ul>
+            {% for entry in classification_log %}
+            <li>
+                <div class="result-title">Text:</div>
+                <div class="result-text">"{{ entry.text }}"</div>
+                <div class="result-title">Class:</div>
+                <div class="result-text" style="white-space: pre-wrap;">{{ entry.result }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <script>
+        function validateForm() {
+            const textInput = document.getElementById('textInput').value.trim();
+            const wordCount = textInput.split(/\s+/).length;
+            if (wordCount < 5) {
+                alert('Entrer au minimum 5 mots svp.');
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+
+</html>
