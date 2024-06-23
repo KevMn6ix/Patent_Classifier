@@ -80,6 +80,7 @@ data.xlsx
 lemm_data.xlsx
 cleaned_data.xlsx
 cl_mini_data.xlsx
+old_main.ipynb
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -90,6 +91,7 @@ ipython_config.py
 
 # Folder
 fasttext_files/
+assets/
 
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is
