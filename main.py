@@ -1,6 +1,9 @@
 import streamlit as st
 import fasttext
 import os
+from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+import re
 
 st.title('EXplain')
 
@@ -44,74 +47,94 @@ elif menu == 'Classification':
 
     def get_cpc_description(cpc_section):
         return cpc_codes.get(cpc_section, "Unknown CPC section")
+    
+    def load_and_predict_top_words(model_path, text, k=10):
+        if not os.path.exists(model_path):
+            return None, None, None
+        
+        model = fasttext.load_model(model_path)
+        words, _ = model.get_words(include_freq=True)
+        top_words = words[:k]  # Sélectionne les premiers k mots les plus fréquents
+        
+        predicted_class, probability = model.predict(text)
+        predicted_class = predicted_class[0].split("__label__")[-1]
+        
+        return predicted_class, probability, top_words
 
     def classify_text_hierarchically(text):
-        # Function to classify text at each hierarchical level
-
-        def load_and_predict(model_path, text):
-            if not os.path.exists(model_path):
-                return None, None
-            model = fasttext.load_model(model_path)
-            predicted_class, probability = model.predict(text)
-            return predicted_class[0].split("__label__")[-1], probability[0]
-
         result = {}
-        
+
         # Level 1: CPC Section
         section_model_path = os.path.join(base_dir, "section_model.bin")
-        cpc_section, section_prob = load_and_predict(section_model_path, text)
+        cpc_section, section_prob, top_section_words = load_and_predict_top_words(section_model_path, text)
         if cpc_section is None:
             result['section'] = "Model not found"
             return result
-
+        
         result['section'] = {
             'code': cpc_section,
             'description': get_cpc_description(cpc_section),
-            'probability': section_prob
+            'probability': section_prob,
+            'top_words': top_section_words
         }
         
         # Level 2: CPC Class
         class_model_path = os.path.join(base_dir, f"section_{cpc_section}", "class_model.bin")
-        cpc_class, class_prob = load_and_predict(class_model_path, text)
+        cpc_class, class_prob, top_class_words = load_and_predict_top_words(class_model_path, text)
         if cpc_class is None:
             result['class'] = "Model not found"
             return result
 
-        result['class'] = {'code': cpc_class, 'probability': class_prob}
-
+        result['class'] = {
+            'code': cpc_class,
+            'probability': class_prob,
+            'top_words': top_class_words
+        }
+        
         # Level 3: CPC Subclass
         subclass_model_path = os.path.join(base_dir, f"section_{cpc_section}", f"class_{cpc_class}", "subclass_model.bin")
-        cpc_subclass, subclass_prob = load_and_predict(subclass_model_path, text)
+        cpc_subclass, subclass_prob, top_subclass_words = load_and_predict_top_words(subclass_model_path, text)
         if cpc_subclass is None:
             result['subclass'] = "Model not found"
             return result
 
-        result['subclass'] = {'code': cpc_subclass, 'probability': subclass_prob}
-
+        result['subclass'] = {
+            'code': cpc_subclass,
+            'probability': subclass_prob,
+            'top_words': top_subclass_words
+        }
+        
         # Level 4: CPC Group
         group_model_path = os.path.join(base_dir, f"section_{cpc_section}", f"class_{cpc_class}", f"subclass_{cpc_subclass}", "group_model.bin")
-        cpc_group, group_prob = load_and_predict(group_model_path, text)
+        cpc_group, group_prob, top_group_words = load_and_predict_top_words(group_model_path, text)
         if cpc_group is None:
             result['group'] = "Model not found"
             return result
 
-        result['group'] = {'code': cpc_group, 'probability': group_prob}
+        result['group'] = {
+            'code': cpc_group,
+            'probability': group_prob,
+            'top_words': top_group_words
+        }
 
         # Level 5: CPC Subgroup
         subgroup_model_path = os.path.join(base_dir, f"section_{cpc_section}", f"class_{cpc_class}", f"subclass_{cpc_subclass}", f"group_{cpc_group}", "subgroup_model.bin")
-        cpc_subgroup, subgroup_prob = load_and_predict(subgroup_model_path, text)
+        cpc_subgroup, subgroup_prob, top_subgroup_words = load_and_predict_top_words(subgroup_model_path, text)
         if cpc_subgroup is None:
             result['subgroup'] = "Model not found"
             return result
 
-        result['subgroup'] = {'code': cpc_subgroup, 'probability': subgroup_prob}
-
+        result['subgroup'] = {
+            'code': cpc_subgroup,
+            'probability': subgroup_prob,
+            'top_words': top_subgroup_words
+        }
+        
         # Combine the full CPC code
         result['full_cpc_code'] = f"{cpc_section}{cpc_class}{cpc_subclass}{cpc_group}/{cpc_subgroup}"
 
         return result
-
-
+  
     def format_classification_result(result):
         if 'section' in result and isinstance(result['section'], dict):
             section_desc = f"{result['section']['code']} - {result['section']['description']} (Probability: {result['section']['probability']:.2f})"
@@ -148,24 +171,54 @@ elif menu == 'Classification':
             'Section' : section_desc,
             'Class' : class_desc,
             'Subclass' : subclass_desc,
+            'Group' : group_desc,
             'Subgroup' : subgroup_desc,
             'Full CPC Code' : full_cpc_code
         }
+        
 
         return formatted_result
+    
+    def highlight_text_with_tfidf(text, tfidf_vectorizer):
+        tfidf_matrix = tfidf_vectorizer.transform([text])
+        feature_array = np.array(tfidf_vectorizer.get_feature_names_out())
+        tfidf_scores = tfidf_matrix.toarray().flatten()
+        
+        tfidf_scores = (tfidf_scores - tfidf_scores.min()) / (tfidf_scores.max() - tfidf_scores.min())
+        
+        def get_highlight_color(score):
+            if score >= 0.8:
+                return "red"  # Dark red for high influence
+            elif score >= 0.6:
+                return "indianred"
+            elif score >=0.4:
+                return "pink"
+            else:
+                return ""
+        word_pattern = re.compile(r'\b\w+\b')
+        
+        highlighted_text = word_pattern.sub(lambda match: f'<mark style="background-color: {get_highlight_color(tfidf_scores[np.where(feature_array == match.group())[0][0]])}">{match.group()}</mark>', text)
+
+        return highlighted_text
+
+    tfidf_vectorizer = TfidfVectorizer()
 
     # Zone de texte pour la description du brevet
     description = st.text_area('Description du Brevet')
 
     # Bouton pour soumettre
     classification_log = []
-    if st.button('Classer'):
-        
+    if st.button('Classer'):       
         result = classify_text_hierarchically(description)
         formatted_result = format_classification_result(result)
-    
         for key, value in formatted_result.items():
             st.write(f"{key} : {value}")
+        
+        tfidf_vectorizer.fit([description])    
+        highlighted_text = highlight_text_with_tfidf(description, tfidf_vectorizer)
+        
+        st.markdown("### Texte Surligné avec les mots importants")
+        st.markdown(highlighted_text, unsafe_allow_html=True)
             
 else:
     st.header('À propos')
@@ -183,11 +236,11 @@ else:
         st.markdown("[Edem Adjovi](https://www.linkedin.com/in/edem-adjovi/)")
 
     with col2:
-        st.image('https://via.placeholder.com/150')
+        st.image('./assets/batman.jpg')
         st.markdown("[Hissein Doudou](https://www.linkedin.com/in/hisseindoudou/)")
         
     with col3:
-        st.image('./assets/olivierl.jpg')
+        st.image('./assets/olivierl.jpg', width=130)
         st.markdown("[Olivier Leroi--Morant](https://www.linkedin.com/in/olivier-leroi-morant-data-science/)")
         
     with col4:
