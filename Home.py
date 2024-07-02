@@ -1,6 +1,4 @@
 import streamlit as st
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 
 # Titre de l'application
 st.title('StarPC-Forest')
