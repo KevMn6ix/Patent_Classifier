@@ -52,9 +52,14 @@ def classify_text_hierarchically(text):
         result['section'] = "Model not found"
         return result
 
-    result['section'] = {
+    """result['section'] = {
         'code': cpc_section,
         'description': get_cpc_description(cpc_section),
+        'probability': section_prob
+    }"""
+    
+    result['section'] = {
+        'code': cpc_section,
         'probability': section_prob
     }
 
@@ -102,7 +107,8 @@ def classify_text_hierarchically(text):
 # Fonction pour formater le résultat de la classification
 def format_classification_result(result):
     if 'section' in result and isinstance(result['section'], dict):
-        section_desc = f"{result['section']['code']} - {result['section']['description']} (Probability: {result['section']['probability']:.2f})"
+        #section_desc = f"{result['section']['code']} - {result['section']['description']} (Probability: {result['section']['probability']:.2f})"
+        section_desc = f"{result['section']['code']} (Probability: {result['section']['probability']:.2f})"
     else:
         section_desc = "Section model not found"
 

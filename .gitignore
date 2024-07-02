@@ -81,6 +81,7 @@ lemm_data.xlsx
 cleaned_data.xlsx
 cl_mini_data.xlsx
 old_main.ipynb
+app.py
 
 # Jupyter Notebook
 .ipynb_checkpoints
