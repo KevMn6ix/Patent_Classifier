@@ -1,7 +1,10 @@
 import streamlit as st
-from utils import classify_text_hierarchically, format_classification_result, get_word_importance
+from utils import (classify_text_hierarchically, 
+                   format_classification_result, 
+                   get_word_importance
+                )
 from scrapping import find_description
-
+from convert_cpc_to_ipc import cpc_to_ipc
 
 def highlight_text(text, word_importance, highlight_color="yellow"):
     words = text.split()
@@ -48,6 +51,11 @@ if st.button('Classer'):
         for (key1, value1), (key2, value2) in zip(formatted_result.items(), code_description.items()):
             st.write(f"{key1} : {value1}, {value2}")
 
+        st.write(f"Full CPC code : {formatted_result['Full CPC Code']}")
+        
+        ipc_code = cpc_to_ipc(formatted_result['Full CPC Code'])
+        st.write(f"Full IPC code : {ipc_code}")
+        
         # Calculer l'importance des mots par perturbation
         word_importance = get_word_importance(description, "fasttext_files/sections/section_model.bin")
         st.header("Mots influents dans la prédiction")
