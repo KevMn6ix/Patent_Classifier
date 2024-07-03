@@ -5,7 +5,7 @@ st.title('StarPC-Forest')
 
 st.header('Bienvenue sur notre application de classification de texte')
 st.write("Cette application vous permet de classifier des textes en différentes catégories grâce à un modèle d'intelligence artificielle.")
-st.image('https://via.placeholder.com/600x300', caption='Notre Logo')
+st.image('./assets/seabornsailors.png',width=300)
 
 st.header('Fonctionnalités')
 st.write('Voici ce que notre application peut faire :')
