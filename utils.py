@@ -164,7 +164,7 @@ def get_word_importance(text, model_path):
         perturbed_prob = perturbed_prob[0]
         
         importance_score = original_prob - perturbed_prob
-        if importance_score > 0:  # Ajoutez cette ligne pour filtrer les scores positifs
+        if importance_score > 0:  
             importance_scores.append((word, importance_score))
     
     # Trier les mots par importance
