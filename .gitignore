@@ -82,6 +82,7 @@ cleaned_data.xlsx
 cl_mini_data.xlsx
 old_main.ipynb
 app.py
+patent.txt
 
 # Jupyter Notebook
 .ipynb_checkpoints

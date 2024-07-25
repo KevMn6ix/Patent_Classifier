@@ -16,7 +16,7 @@ with col1:
     st.markdown("[Edem Adjovi](https://www.linkedin.com/in/edem-adjovi/)")
 
 with col2:
-    st.image('https://via.placeholder.com/150')
+    st.image('./assets/hissein.jpg')
     st.markdown("[Hissein Doudou](https://www.linkedin.com/in/hisseindoudou/)")
 
 with col3:
