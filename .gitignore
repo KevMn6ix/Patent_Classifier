@@ -83,6 +83,9 @@ cl_mini_data.xlsx
 old_main.ipynb
 app.py
 patent.txt
+scrapping.ipynb
+cpc_to_ipc.ipynb
+eda.ipynb
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -94,6 +97,8 @@ ipython_config.py
 # Folder
 fasttext_files/
 assets/
+templates/
+static/
 
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is
