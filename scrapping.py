@@ -6,6 +6,7 @@ url ='https://www.uspto.gov/web/patents/classification/cpc/html/cpc-G.html'
 
 parser = 'lxml'
 
+# find any description by scrapping the relevant page
 def find_section_description(section):
     url = f'https://www.uspto.gov/web/patents/classification/cpc/html/cpc-{section}.html'
     page = requests.get(url)

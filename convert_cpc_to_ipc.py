@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 from io import StringIO
 
+# convert the cpc code to ipc by scrap the textfile
 def cpc_to_ipc(cpc_code):
     url = 'https://www.cooperativepatentclassification.org/sites/default/files/cpc/concordances/cpc-ipc-concordance.txt'
     response = requests.get(url)

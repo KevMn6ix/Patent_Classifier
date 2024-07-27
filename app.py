@@ -91,6 +91,7 @@ def classify_text_hierarchically(text):
 
     return result
 
+# format classification to display the result
 def format_classification_result(result):
     if 'section' in result and isinstance(result['section'], dict):
         section_desc = f"{result['section']['code']} - {result['section']['description']} (Probability: {result['section']['probability']:.2f})"

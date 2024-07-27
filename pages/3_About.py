@@ -10,7 +10,6 @@ st.write("""
 ### Notre équipe
 """)
 col1, col2, col3, col4, col5 = st.columns(5)
-# Exemple d'image en ligne avec texte en dessous
 with col1:
     st.image('./assets/edema.jpg')
     st.markdown("[Edem Adjovi](https://www.linkedin.com/in/edem-adjovi/)")
@@ -30,9 +29,6 @@ with col4:
 with col5:
     st.image('./assets/oumart.jpg')
     st.markdown("[Oumar Traoré](https://www.linkedin.com/in/oumar-traoré-789245221/)")
-
-
-# Vous pouvez ajouter autant d'images que nécessaire avec leurs descriptions
 
 st.write('---')
 st.write('Développé par les Seaborn Sailors.')
