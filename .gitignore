@@ -96,7 +96,6 @@ ipython_config.py
 
 # Folder
 fasttext_files/
-assets/
 templates/
 static/
 
