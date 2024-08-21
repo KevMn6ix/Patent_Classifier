@@ -37,7 +37,7 @@ def classify_text_hierarchically(text):
 
     result = {}
     
-    # Level 1: CPC Section
+    # Level 1: CPC Sections
     section_model_path = os.path.join(base_dir, "section_model.bin")
     cpc_section, section_prob = load_and_predict(section_model_path, text)
     if cpc_section is None:
